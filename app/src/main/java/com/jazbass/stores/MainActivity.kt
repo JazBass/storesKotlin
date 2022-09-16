@@ -45,7 +45,6 @@ class MainActivity : AppCompatActivity(), OnClickListener, MainAux {
         hideFab()
     }
 
-
     private fun setUpRecyclerView() {
         mAdapter = StoreAdapter(mutableListOf(), this)
         mGridLayout = GridLayoutManager(this, 2)
@@ -98,6 +97,6 @@ class MainActivity : AppCompatActivity(), OnClickListener, MainAux {
     }
 
     override fun updateStore(storeEntity: StoreEntity) {
-        TODO("Not yet implemented")
+        mAdapter.update(storeEntity)
     }
 }
