@@ -21,9 +21,11 @@ class StoreAdapter (private var stores: MutableList<StoreEntity>, private var li
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val store = stores.get(position)
+        val store = stores[position]
+
         with(holder){
             setListener(store)
+
             binding.txtName.text = store.name
             binding.cbFavorite.isChecked = store.isFavorite
 

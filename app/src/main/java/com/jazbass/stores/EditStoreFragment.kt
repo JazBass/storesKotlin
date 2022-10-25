@@ -150,33 +150,11 @@ class EditStoreFragment : Fragment() {
         return isValid
     }
 
-//    private fun validateFields(): Boolean {
-//        var isValid = true
-//
-//        if (mBinding.etPhotoUrl.text.toString().trim().isEmpty()){
-//            mBinding.tilPhotoUrl.error = getString(R.string.helper_require)
-//            mBinding.etPhotoUrl.requestFocus()
-//            isValid = false
-//        }
-//
-//        if (mBinding.etPhone.text.toString().trim().isEmpty()){
-//            mBinding.tilPhone.error = getString(R.string.helper_require)
-//            mBinding.etPhone.requestFocus()
-//            isValid = false
-//        }
-//
-//        if (mBinding.etName.text.toString().trim().isEmpty()){
-//            mBinding.tilName.error = getString(R.string.helper_require)
-//            mBinding.etName.requestFocus()
-//            isValid = false
-//        }
-//
-//        return isValid
-//    }
-
     private fun hideKeyword() {
         val imn = mActivity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imn.hideSoftInputFromWindow(requireView().windowToken, 0)
+        if(view!=null){
+            imn.hideSoftInputFromWindow(requireView().windowToken, 0)
+        }
     }
 
     override fun onDestroyView() {
