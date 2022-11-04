@@ -1,6 +1,7 @@
-package com.jazbass.stores
+package com.jazbass.stores.common.database
 
 import androidx.room.*
+import com.jazbass.stores.common.entities.StoreEntity
 
 @Dao
 interface StoreDao {

@@ -1,4 +1,4 @@
-package com.jazbass.stores
+package com.jazbass.stores.common.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

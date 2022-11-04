@@ -1,4 +1,6 @@
-package com.jazbass.stores
+package com.jazbass.stores.mainModule.adapter
+
+import com.jazbass.stores.common.entities.StoreEntity
 
 interface OnClickListener {
     fun onClick(storeId: Long)

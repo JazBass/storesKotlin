@@ -1,4 +1,4 @@
-package com.jazbass.stores
+package com.jazbass.stores.mainModule.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.jazbass.stores.R
+import com.jazbass.stores.common.entities.StoreEntity
 import com.jazbass.stores.databinding.ItemStoreBinding
 
 class StoreAdapter (private var stores: MutableList<StoreEntity>, private var listener: OnClickListener):
@@ -40,8 +42,8 @@ class StoreAdapter (private var stores: MutableList<StoreEntity>, private var li
     override fun getItemCount(): Int = stores.size
 
 
-    fun setStores(stores: MutableList<StoreEntity>) {
-        this.stores=stores
+    fun setStores(stores: List<StoreEntity>) {
+        this.stores=stores as MutableList<StoreEntity>
         notifyDataSetChanged()
     }
 

@@ -1,4 +1,4 @@
-package com.jazbass.stores
+package com.jazbass.stores.editModule
 
 import android.content.Context
 import android.os.Bundle
@@ -12,7 +12,11 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputLayout
+import com.jazbass.stores.R
+import com.jazbass.stores.StoreApplication
+import com.jazbass.stores.common.entities.StoreEntity
 import com.jazbass.stores.databinding.FragmentEditStoreBinding
+import com.jazbass.stores.mainModule.MainActivity
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
@@ -103,7 +107,7 @@ class EditStoreFragment : Fragment() {
                         photoUrl = mBinding.etPhotoUrl.text.toString().trim()
                     }
                     doAsync {
-                        if (mIsEditMode)StoreApplication.database.storeDao().updateStore(mStoreEntity!!)
+                        if (mIsEditMode) StoreApplication.database.storeDao().updateStore(mStoreEntity!!)
                         else mStoreEntity!!.id = StoreApplication.database.storeDao().addStore(mStoreEntity!!)
                         uiThread {
 

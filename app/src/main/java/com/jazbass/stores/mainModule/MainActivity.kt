@@ -1,14 +1,23 @@
-package com.jazbass.stores
+package com.jazbass.stores.mainModule
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.jazbass.stores.*
+import com.jazbass.stores.common.utils.MainAux
+import com.jazbass.stores.common.entities.StoreEntity
 import com.jazbass.stores.databinding.ActivityMainBinding
+import com.jazbass.stores.editModule.EditStoreFragment
+import com.jazbass.stores.mainModule.adapter.OnClickListener
+import com.jazbass.stores.mainModule.adapter.StoreAdapter
+import com.jazbass.stores.mainModule.viewModel.MainViewModel
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
@@ -18,6 +27,9 @@ class MainActivity : AppCompatActivity(), OnClickListener, MainAux {
     private lateinit var mAdapter: StoreAdapter
     private lateinit var mGridLayout: RecyclerView.LayoutManager
 
+    //MVVM
+    private lateinit var mMainViewModel: MainViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding = ActivityMainBinding.inflate(layoutInflater)
@@ -25,7 +37,16 @@ class MainActivity : AppCompatActivity(), OnClickListener, MainAux {
 
         mBinding.fab.setOnClickListener{launchEditFragment()}
 
+        setUpViewModel()
         setUpRecyclerView()
+    }
+
+    //Inicializamos el viewModel y el observer para los cambios
+    private fun setUpViewModel() {
+        mMainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        mMainViewModel.getStores().observe(this) { stores ->
+            mAdapter.setStores(stores)
+        }
     }
 
     private fun launchEditFragment(args: Bundle? = null) {
@@ -47,7 +68,7 @@ class MainActivity : AppCompatActivity(), OnClickListener, MainAux {
     private fun setUpRecyclerView() {
         mAdapter = StoreAdapter(mutableListOf(), this)
         mGridLayout = GridLayoutManager(this, 2)
-        getStores()
+        //getStores()
 
         mBinding.recyclerView.apply {
             setHasFixedSize(true)
@@ -56,12 +77,12 @@ class MainActivity : AppCompatActivity(), OnClickListener, MainAux {
         }
     }
 
-    private fun getStores() {
-        doAsync {
-            val stores = StoreApplication.database.storeDao().getAllStores()
-            uiThread { mAdapter.setStores(stores) }
-        }
-    }
+//    private fun getStores() {
+//        doAsync {
+//            val stores = StoreApplication.database.storeDao().getAllStores()
+//            uiThread { mAdapter.setStores(stores) }
+//        }
+//    }
 
     override fun onClick(storeId: Long) {
         val args = Bundle()
@@ -125,10 +146,11 @@ class MainActivity : AppCompatActivity(), OnClickListener, MainAux {
     }
 
     private fun startIntent(intent: Intent){
-        if (intent.resolveActivity(packageManager) != null)
+        try{
             startActivity(intent)
-        else
+        }catch (ex: ActivityNotFoundException){
             Toast.makeText(this, R.string.main_error_no_resolve, Toast.LENGTH_LONG).show()
+        }
     }
 
 

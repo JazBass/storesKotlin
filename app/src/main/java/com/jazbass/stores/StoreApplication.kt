@@ -2,9 +2,7 @@ package com.jazbass.stores
 
 import android.app.Application
 import androidx.room.Room
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
-import java.util.*
+import com.jazbass.stores.common.database.StoreDatabase
 
 class StoreApplication: Application() {
     companion object{
