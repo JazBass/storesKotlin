@@ -8,6 +8,9 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.material.snackbar.Snackbar
@@ -16,6 +19,7 @@ import com.jazbass.stores.R
 import com.jazbass.stores.StoreApplication
 import com.jazbass.stores.common.entities.StoreEntity
 import com.jazbass.stores.databinding.FragmentEditStoreBinding
+import com.jazbass.stores.editModule.viewModel.EditStoreViewModel
 import com.jazbass.stores.mainModule.MainActivity
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -23,9 +27,18 @@ import org.jetbrains.anko.uiThread
 class EditStoreFragment : Fragment() {
 
     private lateinit var mBinding: FragmentEditStoreBinding
+    //MVVM
+    private lateinit var mEditStoreViewModel: EditStoreViewModel
+
     private var mActivity: MainActivity? = null
     private var mIsEditMode: Boolean = false
     private var mStoreEntity: StoreEntity? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        mEditStoreViewModel = ViewModelProvider(requireActivity()).get(EditStoreViewModel::class.java)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,12 +60,19 @@ class EditStoreFragment : Fragment() {
             mStoreEntity = StoreEntity(name = "", phone = "", photoUrl = "")
         }
 
-        mActivity = activity as? MainActivity
-        mActivity?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        mActivity?.supportActionBar?.title = getString(R.string.edit_store_title)
+        //MVVM
 
-        setHasOptionsMenu(true)
+        setUpViewModel()
 
+        setUpActionBar()
+        setUpTextFields()
+    }
+
+    private fun setUpViewModel() {
+
+    }
+
+    private fun setUpTextFields() {
         mBinding.etPhotoUrl.addTextChangedListener {
             Glide.with(this)
                 .load(mBinding.etPhotoUrl.text.toString())
@@ -65,6 +85,14 @@ class EditStoreFragment : Fragment() {
         mBinding.etName.addTextChangedListener {validateFields(mBinding.tilName)}
 
         mBinding.etPhone.addTextChangedListener {validateFields(mBinding.tilPhone)}
+    }
+
+    private fun setUpActionBar() {
+        mActivity = activity as? MainActivity
+        mActivity?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        mActivity?.supportActionBar?.title = getString(R.string.edit_store_title)
+
+        setHasOptionsMenu(true)
     }
 
     private fun getStore(id: Long) {
@@ -114,12 +142,13 @@ class EditStoreFragment : Fragment() {
                             hideKeyword()
 
                             if (mIsEditMode){
-                                mActivity?.updateStore(mStoreEntity!!)
+                                // FIXME: 28/11 view model
+                                //mActivity?.updateStore(mStoreEntity!!)
                                 Snackbar.make(mBinding.root,
                                     R.string.edit_store_message_update_success,
                                     Snackbar.LENGTH_SHORT).show()
                             }else {
-                                mActivity?.addStore(mStoreEntity!!)
+                                //mActivity?.addStore(mStoreEntity!!)
                                 Toast.makeText(
                                     mActivity, R.string.edit_store_message_save_success,
                                     Toast.LENGTH_SHORT
@@ -169,7 +198,7 @@ class EditStoreFragment : Fragment() {
     override fun onDestroy() {
         mActivity?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
         mActivity?.supportActionBar?.title = getString(R.string.app_name)
-        mActivity?.hideFab(true)
+        mEditStoreViewModel.setShowFab(true)
         setHasOptionsMenu(false)
         super.onDestroy()
     }

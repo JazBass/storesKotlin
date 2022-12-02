@@ -38,12 +38,12 @@ class MainViewModel: ViewModel() {
     private fun loadStores(){
 //        interactor.getStoresCallback(object : MainInteractor.StoresCallback{
 //            override fun getStoresCallback(stores: MutableList<StoreEntity>) {
-//                //Esta esc la propiedad que estamos observando
 //                this@MainViewModel.stores.value = stores
 //            }
 //        })
         interactor.getStores {
-            stores.value=it
+            stores.value = it
+            storeList = it
         }
     }
 
@@ -62,6 +62,7 @@ class MainViewModel: ViewModel() {
             val index = storeList.indexOf(storeEntity)
             if (index != -1) {
                 storeList[index] = storeEntity
+                //Actualizamos el mutableLiveData
                 stores.value = storeList
             }
         }
