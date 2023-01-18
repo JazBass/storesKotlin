@@ -48,25 +48,21 @@ class StoreAdapter (private var stores: MutableList<StoreEntity>, private var li
     }
 
     fun add(storeEntity: StoreEntity) {
-        if (!stores.contains(storeEntity)) {
-            stores.add(storeEntity)
-            notifyItemInserted(stores.size-1)
+        if (storeEntity.id!=0L) {
+            if (!stores.contains(storeEntity)) {
+                stores.add(storeEntity)
+                notifyItemInserted(stores.size-1)
+            }else{
+                update(storeEntity)
+            }
         }
     }
 
-    fun update(storeEntity: StoreEntity) {
+    private fun update(storeEntity: StoreEntity) {
         val index = stores.indexOf(storeEntity)
         if (index != -1){
             stores[index] = storeEntity
             notifyItemChanged(index)
-        }
-    }
-
-    fun delete(storeEntity: StoreEntity) {
-        val index = stores.indexOf(storeEntity)
-        if (index != -1){
-            stores.removeAt(index)
-            notifyItemRemoved(index)
         }
     }
 
@@ -75,7 +71,7 @@ class StoreAdapter (private var stores: MutableList<StoreEntity>, private var li
 
         fun setListener(storeEntity: StoreEntity){
             with(binding.root){
-                setOnClickListener{listener.onClick(storeEntity.id)}
+                setOnClickListener{listener.onClick(storeEntity)}
                 setOnLongClickListener {
                     listener.onDeleteStore(storeEntity)
                     true

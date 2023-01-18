@@ -47,24 +47,27 @@ class MainActivity : AppCompatActivity(), OnClickListener {
 
     //Inicializamos el viewModel y el observer para los cambios
     private fun setUpViewModel() {
-        mMainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        mMainViewModel = ViewModelProvider(this)[MainViewModel::class.java]
         mMainViewModel.getStores().observe(this) { stores ->
             mAdapter.setStores(stores)
         }
 
-        mEditStoreViewModel = ViewModelProvider(this).get(EditStoreViewModel::class.java)
+        mEditStoreViewModel = ViewModelProvider(this)[EditStoreViewModel::class.java]
         mEditStoreViewModel.getShowFab().observe(this) { isVisible ->
             if(isVisible)mBinding.fab.show() else mBinding.fab.hide()
+        }
+        mEditStoreViewModel.getStoreSelected().observe(this){storeEntity ->
+            mAdapter.add(storeEntity)
         }
 
         //if(isVisible)mBinding.fab.show() else mBinding.fab.hide()
     }
 
-    private fun launchEditFragment(args: Bundle? = null) {
+    private fun launchEditFragment(storeEntity: StoreEntity = StoreEntity()) {
         mEditStoreViewModel.setShowFab(false)
-        val fragment = EditStoreFragment()
-        if (args!=null) fragment.arguments = args
+        mEditStoreViewModel.setStoreSelected(storeEntity)
 
+        val fragment = EditStoreFragment()
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
 
@@ -96,19 +99,16 @@ class MainActivity : AppCompatActivity(), OnClickListener {
 //        }
 //    }
 
-    override fun onClick(storeId: Long) {
-        val args = Bundle()
-        args.putLong(getString(R.string.arg_id), storeId)
+    /*
+    *OnClickListener
+    */
 
-        launchEditFragment(args)
+    override fun onClick(storeEntity: StoreEntity) {
+        launchEditFragment(storeEntity)
     }
 
     override fun onFavoriteStore(storeEntity: StoreEntity) {
-        storeEntity.isFavorite = !storeEntity.isFavorite
-        doAsync {
-            StoreApplication.database.storeDao().updateStore(storeEntity)
-            uiThread { mAdapter.update(storeEntity) }
-        }
+        mMainViewModel.updateStore(storeEntity)
     }
 
     override fun onDeleteStore(storeEntity: StoreEntity) {
@@ -129,10 +129,7 @@ class MainActivity : AppCompatActivity(), OnClickListener {
     }
 
     private fun confirmDelete(storeEntity: StoreEntity) {
-        doAsync {
-            StoreApplication.database.storeDao().deleteStore(storeEntity)
-            uiThread { mAdapter.delete(storeEntity) }
-        }
+        mMainViewModel.deleteStore(storeEntity)
     }
 
     private fun dial(phone: String){
