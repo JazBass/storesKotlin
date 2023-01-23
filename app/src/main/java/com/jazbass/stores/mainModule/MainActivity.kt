@@ -7,12 +7,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.get
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.jazbass.stores.*
-import com.jazbass.stores.common.utils.MainAux
 import com.jazbass.stores.common.entities.StoreEntity
 import com.jazbass.stores.databinding.ActivityMainBinding
 import com.jazbass.stores.editModule.EditStoreFragment
@@ -20,8 +18,6 @@ import com.jazbass.stores.editModule.viewModel.EditStoreViewModel
 import com.jazbass.stores.mainModule.adapter.OnClickListener
 import com.jazbass.stores.mainModule.adapter.StoreAdapter
 import com.jazbass.stores.mainModule.viewModel.MainViewModel
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
 
 class MainActivity : AppCompatActivity(), OnClickListener {
 
@@ -32,7 +28,6 @@ class MainActivity : AppCompatActivity(), OnClickListener {
     //MVVM
     private lateinit var mMainViewModel: MainViewModel
     private lateinit var mEditStoreViewModel: EditStoreViewModel
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,10 +51,9 @@ class MainActivity : AppCompatActivity(), OnClickListener {
         mEditStoreViewModel.getShowFab().observe(this) { isVisible ->
             if(isVisible)mBinding.fab.show() else mBinding.fab.hide()
         }
-        mEditStoreViewModel.getStoreSelected().observe(this){storeEntity ->
+        mEditStoreViewModel.getStoreSelected().observe(this) { storeEntity ->
             mAdapter.add(storeEntity)
         }
-
         //if(isVisible)mBinding.fab.show() else mBinding.fab.hide()
     }
 
@@ -76,8 +70,6 @@ class MainActivity : AppCompatActivity(), OnClickListener {
             addToBackStack(null)
             commit()
         }
-
-
     }
 
     private fun setUpRecyclerView() {
@@ -91,13 +83,6 @@ class MainActivity : AppCompatActivity(), OnClickListener {
             adapter = mAdapter
         }
     }
-
-//    private fun getStores() {
-//        doAsync {
-//            val stores = StoreApplication.database.storeDao().getAllStores()
-//            uiThread { mAdapter.setStores(stores) }
-//        }
-//    }
 
     /*
     *OnClickListener

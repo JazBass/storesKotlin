@@ -3,17 +3,12 @@ package com.jazbass.stores.mainModule.viewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.jazbass.stores.StoreApplication
 import com.jazbass.stores.common.entities.StoreEntity
 import com.jazbass.stores.mainModule.model.MainInteractor
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
 
 class MainViewModel: ViewModel() {
 
     private var storeList: MutableList<StoreEntity>
-
-    //Reflejar los datos dentro de nuestra vista
 
     private var interactor: MainInteractor
 
@@ -61,11 +56,10 @@ class MainViewModel: ViewModel() {
         interactor.updateStore(storeEntity) {
             val index = storeList.indexOf(storeEntity)
             if (index != -1) {
-                storeList[index] = storeEntity
+                  storeList[index] = storeEntity
                 //Actualizamos el mutableLiveData
                 stores.value = storeList
             }
         }
     }
-
 }

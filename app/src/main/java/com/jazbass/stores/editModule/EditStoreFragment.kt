@@ -8,21 +8,16 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.get
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputLayout
 import com.jazbass.stores.R
-import com.jazbass.stores.StoreApplication
 import com.jazbass.stores.common.entities.StoreEntity
 import com.jazbass.stores.databinding.FragmentEditStoreBinding
 import com.jazbass.stores.editModule.viewModel.EditStoreViewModel
 import com.jazbass.stores.mainModule.MainActivity
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
 
 class EditStoreFragment : Fragment() {
 
@@ -32,7 +27,7 @@ class EditStoreFragment : Fragment() {
 
     private var mActivity: MainActivity? = null
     private var mIsEditMode: Boolean = false
-    private var mStoreEntity: StoreEntity? = null
+    private lateinit var mStoreEntity: StoreEntity
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,9 +71,9 @@ class EditStoreFragment : Fragment() {
             when(result){
                 is Long -> {
                     //re assign  ID
-                    mStoreEntity!!.id = result
+                    mStoreEntity.id = result
                     //A new store
-                    mEditStoreViewModel.setStoreSelected(mStoreEntity!!)
+                    mEditStoreViewModel.setStoreSelected(mStoreEntity)
 
                     Toast.makeText(
                         mActivity, R.string.edit_store_message_save_success,
@@ -87,7 +82,7 @@ class EditStoreFragment : Fragment() {
                     mActivity?.onBackPressed()
                 }
                 is StoreEntity -> {
-                    mEditStoreViewModel.setStoreSelected(mStoreEntity!!)
+                    mEditStoreViewModel.setStoreSelected(mStoreEntity)
 
                     Toast.makeText( mActivity,
                         R.string.edit_store_message_update_success,
@@ -131,7 +126,6 @@ class EditStoreFragment : Fragment() {
 
     private fun String.editable(): Editable = Editable.Factory.getInstance().newEditable(this)
 
-
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_save, menu)
         super.onCreateOptionsMenu(menu, inflater)
@@ -144,17 +138,16 @@ class EditStoreFragment : Fragment() {
                 true
             }
             R.id.action_save -> {
-                if (mStoreEntity != null &&
-                    validateFields(mBinding.tilPhotoUrl, mBinding.tilPhone, mBinding.tilName)) {
-                    with(mStoreEntity!!) {
+                if (validateFields(mBinding.tilPhotoUrl, mBinding.tilPhone, mBinding.tilName)) {
+                    with(mStoreEntity) {
                         name = mBinding.etName.text.toString().trim()
                         phone = mBinding.etPhone.text.toString().trim()
                         website = mBinding.etWebsite.text.toString().trim()
                         photoUrl = mBinding.etPhotoUrl.text.toString().trim()
                     }
 
-                    if (mIsEditMode) mEditStoreViewModel.updateStore(mStoreEntity!!)
-                    else mEditStoreViewModel.saveStore(mStoreEntity!!)
+                    if (mIsEditMode) mEditStoreViewModel.updateStore(mStoreEntity)
+                    else mEditStoreViewModel.saveStore(mStoreEntity)
                 }
                 true
             }
