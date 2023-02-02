@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.jazbass.stores.common.entities.StoreEntity
+import com.jazbass.stores.common.utils.Constants
 import com.jazbass.stores.mainModule.model.MainInteractor
 
 class MainViewModel: ViewModel() {
@@ -18,15 +19,21 @@ class MainViewModel: ViewModel() {
         loadStores()
     }
 
-    private val stores: MutableLiveData<List<StoreEntity>> by lazy {
-        MutableLiveData<List<StoreEntity>>().also {
+    private val showProgress : MutableLiveData<Boolean> = MutableLiveData()
+
+    private val stores: MutableLiveData<MutableList<StoreEntity>> by lazy {
+        MutableLiveData<MutableList<StoreEntity>>().also {
             loadStores()
         }
     }
 
     //Devuelve el resultado
-    fun getStores(): LiveData<List<StoreEntity>>{
+    fun getStores(): LiveData<MutableList<StoreEntity>>{
         return stores
+    }
+
+    fun isShowProgress() : LiveData<Boolean>{
+        return showProgress
     }
 
     //Interactor es el acceso al Model y le asigna el resultado al stores del MainModel
@@ -36,7 +43,10 @@ class MainViewModel: ViewModel() {
 //                this@MainViewModel.stores.value = stores
 //            }
 //        })
+        showProgress.value = Constants.SHOW
+
         interactor.getStores {
+            showProgress.value = Constants.HIDE
             stores.value = it
             storeList = it
         }

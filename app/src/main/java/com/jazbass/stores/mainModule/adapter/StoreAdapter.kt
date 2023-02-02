@@ -42,8 +42,8 @@ class StoreAdapter (private var stores: MutableList<StoreEntity>, private var li
     override fun getItemCount(): Int = stores.size
 
 
-    fun setStores(stores: List<StoreEntity>) {
-        this.stores=stores as MutableList<StoreEntity>
+    fun setStores(stores: MutableList<StoreEntity>) {
+        this.stores=stores
         notifyDataSetChanged()
     }
 

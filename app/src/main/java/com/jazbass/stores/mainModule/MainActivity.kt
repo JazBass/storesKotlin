@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
@@ -42,18 +43,24 @@ class MainActivity : AppCompatActivity(), OnClickListener {
 
     //Inicializamos el viewModel y el observer para los cambios
     private fun setUpViewModel() {
+
         mMainViewModel = ViewModelProvider(this)[MainViewModel::class.java]
         mMainViewModel.getStores().observe(this) { stores ->
             mAdapter.setStores(stores)
+            mMainViewModel.isShowProgress().observe(this){isShowProgress ->
+                mBinding.progressBar.visibility = if (isShowProgress) View.VISIBLE else View.GONE
+            }
         }
 
         mEditStoreViewModel = ViewModelProvider(this)[EditStoreViewModel::class.java]
         mEditStoreViewModel.getShowFab().observe(this) { isVisible ->
             if(isVisible)mBinding.fab.show() else mBinding.fab.hide()
         }
+
         mEditStoreViewModel.getStoreSelected().observe(this) { storeEntity ->
             mAdapter.add(storeEntity)
         }
+
         //if(isVisible)mBinding.fab.show() else mBinding.fab.hide()
     }
 
