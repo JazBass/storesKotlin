@@ -58,7 +58,7 @@ class MainInteractor {
                 val jsonList = res.optJSONArray(Constants.STORES_PROPERTY)?.toString()
                 if (jsonList != null ){
                     val mutableListType = object : TypeToken<MutableList<StoreEntity>>(){}.type
-                    storeList = Gson().fromJson<MutableList<StoreEntity>>(jsonList, mutableListType)
+                    storeList = Gson().fromJson(jsonList, mutableListType)
 
                     callback(storeList)
                     return@JsonObjectRequest

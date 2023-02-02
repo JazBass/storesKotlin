@@ -16,7 +16,6 @@ class MainViewModel: ViewModel() {
     init {
         storeList = mutableListOf()
         interactor = MainInteractor()
-        loadStores()
     }
 
     private val showProgress : MutableLiveData<Boolean> = MutableLiveData()
