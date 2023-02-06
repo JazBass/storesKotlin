@@ -46,7 +46,6 @@ class EditStoreFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        /**MVVM**/
         setUpViewModel()
 
         setUpTextFields()
@@ -54,14 +53,13 @@ class EditStoreFragment : Fragment() {
 
     private fun setUpViewModel() {
         mEditStoreViewModel.getStoreSelected().observe(viewLifecycleOwner) {
-            mStoreEntity = it
-            if (it.id != 0L) {
+            mStoreEntity = it ?: StoreEntity()
+            if (it != null) {
                 mIsEditMode = true
                 setUiStore(it)
             } else {
                 mIsEditMode = false
             }
-
             setUpActionBar()
         }
 
@@ -73,7 +71,7 @@ class EditStoreFragment : Fragment() {
                     //re assign  ID
                     mStoreEntity.id = result
                     //A new store
-                    mEditStoreViewModel.setStoreSelected(mStoreEntity)
+                    mEditStoreViewModel.setStoreSelectedId(mStoreEntity.id)
 
                     Toast.makeText(
                         mActivity, R.string.edit_store_message_save_success,
@@ -82,7 +80,7 @@ class EditStoreFragment : Fragment() {
                     mActivity?.onBackPressed()
                 }
                 is StoreEntity -> {
-                    mEditStoreViewModel.setStoreSelected(mStoreEntity)
+                    mEditStoreViewModel.setStoreSelectedId(mStoreEntity.id)
 
                     Toast.makeText( mActivity,
                         R.string.edit_store_message_update_success,
@@ -175,9 +173,9 @@ class EditStoreFragment : Fragment() {
     }
 
     private fun hideKeyword() {
-        val imn = mActivity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imn = mActivity?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
         if(view!=null){
-            imn.hideSoftInputFromWindow(requireView().windowToken, 0)
+            imn?.hideSoftInputFromWindow(requireView().windowToken, 0)
         }
     }
 

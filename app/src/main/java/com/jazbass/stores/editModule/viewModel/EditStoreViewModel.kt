@@ -3,14 +3,17 @@ package com.jazbass.stores.editModule.viewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.jazbass.stores.common.entities.StoreEntity
 import com.jazbass.stores.editModule.model.EditStoreInteractor
+import kotlinx.coroutines.launch
 
 class EditStoreViewModel: ViewModel() {
 
-    private val storeSelected = MutableLiveData<StoreEntity>()
     private val showFab = MutableLiveData<Boolean>()
     private val result = MutableLiveData<Any>()
+
+    private val storeSelectedId = MutableLiveData<Long>()
 
     private val interactor : EditStoreInteractor
 
@@ -18,12 +21,12 @@ class EditStoreViewModel: ViewModel() {
         interactor = EditStoreInteractor()
     }
 
-    fun setStoreSelected(storeEntity: StoreEntity){
-        storeSelected.value = storeEntity
+    fun setStoreSelectedId(id: Long){
+        storeSelectedId.value = id
     }
 
     fun getStoreSelected(): LiveData<StoreEntity>{
-        return storeSelected
+        return interactor.getStoreById(storeSelectedId.value!!)
     }
     fun setShowFab(isVisible: Boolean){
         showFab.value = isVisible
@@ -47,8 +50,8 @@ class EditStoreViewModel: ViewModel() {
     }
 
     fun updateStore(storeEntity: StoreEntity){
-        interactor.updateStore(storeEntity) {storeUpdate ->
-            result.value = storeUpdate
+        viewModelScope.launch {
+            interactor.updateStore(storeEntity)
         }
     }
 

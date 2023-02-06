@@ -1,14 +1,14 @@
 package com.jazbass.stores.mainModule.model
 
 import android.util.Log
-import com.android.volley.Request
-import com.android.volley.toolbox.JsonObjectRequest
-import com.google.gson.Gson
-import com.google.gson.JsonObject
-import com.google.gson.reflect.TypeToken
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.liveData
+import androidx.lifecycle.map
 import com.jazbass.stores.StoreApplication
 import com.jazbass.stores.common.entities.StoreEntity
-import com.jazbass.stores.common.utils.Constants
+import com.jazbass.stores.common.utils.StoresException
+import com.jazbass.stores.common.utils.TypeError
+import kotlinx.coroutines.delay
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
@@ -28,7 +28,16 @@ class MainInteractor {
     }
     */
 
-    fun getStoresRoom(callback: (MutableList<StoreEntity>) -> Unit){
+/*    fun getStores(callback: (MutableList<StoreEntity>) -> Unit) {
+        val isLocal = true
+
+        if (isLocal)
+            getStoresRoom { storeList -> callback(storeList) }
+        else
+            getStoresAPI { storeList -> callback(storeList) }
+    }*/
+
+/*    private fun getStoresRoom(callback: (MutableList<StoreEntity>) -> Unit) {
         doAsync {
             val storeList = StoreApplication.database.storeDao().getAllStores()
             uiThread {
@@ -38,26 +47,21 @@ class MainInteractor {
             }
         }
     }
+ */
 
-    fun getStores(callback: (MutableList<StoreEntity>) -> Unit){
+/*    private fun getStoresAPI(callback: (MutableList<StoreEntity>) -> Unit) {
 
-        val url =  Constants.STORES_URL + Constants.GET_ALL_PATH
+        val url = Constants.STORES_URL + Constants.GET_ALL_PATH
         var storeList = mutableListOf<StoreEntity>()
 
-        val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null,{res ->
+        val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null, { res ->
             val status = res.optInt(Constants.STATUS_PROPERTY, Constants.ERROR)
             // TODO: Error msg
-            if (status == Constants.SUCCESS){
-
-//                val jsonObject = Gson().fromJson(
-//                    res.getJSONArray(Constants.STORES_PROPERTY)
-//                        .get(0).toString(), StoreEntity::class.java
-//                )
-//                Log.i("StoreEntity", jsonObject.toString())
+            if (status == Constants.SUCCESS) {
 
                 val jsonList = res.optJSONArray(Constants.STORES_PROPERTY)?.toString()
-                if (jsonList != null ){
-                    val mutableListType = object : TypeToken<MutableList<StoreEntity>>(){}.type
+                if (jsonList != null) {
+                    val mutableListType = object : TypeToken<MutableList<StoreEntity>>() {}.type
                     storeList = Gson().fromJson(jsonList, mutableListType)
 
                     callback(storeList)
@@ -65,29 +69,32 @@ class MainInteractor {
                 }
             }
             callback(storeList)
-        },{
+        }, {
             it.printStackTrace()
             callback(storeList)
         })
 
         StoreApplication.storeAPI.addToRequestQueue(jsonObjectRequest)
+    }*/
+
+    //Scope is the context which controls the coroutine's lifecycle
+    val stores: LiveData<MutableList<StoreEntity>> = liveData {
+        delay(1_000)//TEMPORAL For see the progressbar
+        val storesLiveData = StoreApplication.database.storeDao().getAllStores()
+        emitSource(storesLiveData.map { stores ->
+            stores.sortedBy { it.name }.toMutableList()
+        })
     }
 
-    fun deleteStore(storeEntity: StoreEntity, callback: (StoreEntity) -> Unit){
-        doAsync {
-            StoreApplication.database.storeDao().deleteStore(storeEntity)
-            uiThread {
-                callback(storeEntity)
-            }
-        }
+    suspend fun deleteStore(storeEntity: StoreEntity) {
+        val result = StoreApplication.database.storeDao().deleteStore(storeEntity)
+        if (result == 0) throw StoresException(TypeError.DELETE)
+        Log.i("AAAA", ": 1")
     }
 
-    fun updateStore(storeEntity: StoreEntity, callback: (StoreEntity) -> Unit){
-        doAsync {
-            StoreApplication.database.storeDao().updateStore(storeEntity)
-            uiThread {
-                callback(storeEntity)
-            }
-        }
+    suspend fun updateStore(storeEntity: StoreEntity){
+        val result = StoreApplication.database.storeDao().updateStore(storeEntity)
+        if (result == 0) throw StoresException(TypeError.UPDATE)
+        Log.i("AAAA", ": 2")
     }
 }
