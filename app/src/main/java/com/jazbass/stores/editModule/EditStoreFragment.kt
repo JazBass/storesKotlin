@@ -15,6 +15,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputLayout
 import com.jazbass.stores.R
 import com.jazbass.stores.common.entities.StoreEntity
+import com.jazbass.stores.common.utils.TypeError
 import com.jazbass.stores.databinding.FragmentEditStoreBinding
 import com.jazbass.stores.editModule.viewModel.EditStoreViewModel
 import com.jazbass.stores.mainModule.MainActivity
@@ -71,7 +72,7 @@ class EditStoreFragment : Fragment() {
                     //re assign  ID
                     mStoreEntity.id = result
                     //A new store
-                    mEditStoreViewModel.setStoreSelectedId(mStoreEntity.id)
+                    mEditStoreViewModel.setStoreSelected(mStoreEntity.id)
 
                     Toast.makeText(
                         mActivity, R.string.edit_store_message_save_success,
@@ -80,12 +81,28 @@ class EditStoreFragment : Fragment() {
                     mActivity?.onBackPressed()
                 }
                 is StoreEntity -> {
-                    mEditStoreViewModel.setStoreSelectedId(mStoreEntity.id)
+                    mEditStoreViewModel.setStoreSelected(mStoreEntity.id)
 
                     Toast.makeText( mActivity,
                         R.string.edit_store_message_update_success,
                         Toast.LENGTH_SHORT).show()
                 }
+            }
+        }
+
+        mEditStoreViewModel.getTypeError().observe(viewLifecycleOwner){typeError ->
+            if (typeError !=TypeError.NONE){
+
+                val msgRes = when (typeError){
+
+                    TypeError.GET -> R.string.main_error_get
+                    TypeError.INSERT -> R.string.main_error_instert
+                    TypeError.UPDATE -> R.string.main_error_update
+                    TypeError.DELETE -> R.string.main_error_delete
+                    else -> R.string.main_error_unknow
+
+                }
+                Snackbar.make(mBinding.root, msgRes, Snackbar.LENGTH_SHORT).show()
             }
         }
     }
@@ -187,8 +204,11 @@ class EditStoreFragment : Fragment() {
     override fun onDestroy() {
         mActivity?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
         mActivity?.supportActionBar?.title = getString(R.string.app_name)
-        mEditStoreViewModel.setShowFab(true)
-        mEditStoreViewModel.setResult(Any())
+
+        with(mEditStoreViewModel){
+            setResult(Any())
+            setTypeError(TypeError.NONE)
+        }
         setHasOptionsMenu(false)
         super.onDestroy()
     }

@@ -8,9 +8,9 @@ import com.jazbass.stores.StoreApplication
 import com.jazbass.stores.common.entities.StoreEntity
 import com.jazbass.stores.common.utils.StoresException
 import com.jazbass.stores.common.utils.TypeError
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
+import kotlinx.coroutines.withContext
 
 class MainInteractor {
     /*
@@ -86,15 +86,15 @@ class MainInteractor {
         })
     }
 
-    suspend fun deleteStore(storeEntity: StoreEntity) {
+    suspend fun deleteStore(storeEntity: StoreEntity) = withContext(Dispatchers.IO){
         val result = StoreApplication.database.storeDao().deleteStore(storeEntity)
         if (result == 0) throw StoresException(TypeError.DELETE)
         Log.i("AAAA", ": 1")
     }
 
-    suspend fun updateStore(storeEntity: StoreEntity){
+    suspend fun updateStore(storeEntity: StoreEntity) = withContext(Dispatchers.IO){
         val result = StoreApplication.database.storeDao().updateStore(storeEntity)
         if (result == 0) throw StoresException(TypeError.UPDATE)
-        Log.i("AAAA", ": 2")
+        Log.i("AAAA", ": 2 ")
     }
 }

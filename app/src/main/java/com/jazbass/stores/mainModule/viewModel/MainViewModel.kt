@@ -15,14 +15,7 @@ import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
 
-    private var storeList: MutableList<StoreEntity>
-
-    private var interactor: MainInteractor
-
-    init {
-        storeList = mutableListOf()
-        interactor = MainInteractor()
-    }
+    private var interactor: MainInteractor = MainInteractor()
 
     private val typeError: MutableLiveData<TypeError> = MutableLiveData()
 
@@ -35,7 +28,6 @@ class MainViewModel : ViewModel() {
             loadStores()
         }
     }*/
-
 
     fun getTypeError(): MutableLiveData<TypeError> = typeError
 
@@ -91,7 +83,7 @@ class MainViewModel : ViewModel() {
         return viewModelScope.launch {
             showProgress.value = Constants.SHOW
             try {
-                block
+                block()
             } catch (e: StoresException) {
                 typeError.value = e.typeError
                 Log.i("ERROR", "AQUI")

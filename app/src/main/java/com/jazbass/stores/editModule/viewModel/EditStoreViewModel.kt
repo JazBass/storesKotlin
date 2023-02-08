@@ -1,11 +1,16 @@
 package com.jazbass.stores.editModule.viewModel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jazbass.stores.common.entities.StoreEntity
+import com.jazbass.stores.common.utils.Constants
+import com.jazbass.stores.common.utils.StoresException
+import com.jazbass.stores.common.utils.TypeError
 import com.jazbass.stores.editModule.model.EditStoreInteractor
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class EditStoreViewModel: ViewModel() {
@@ -13,20 +18,24 @@ class EditStoreViewModel: ViewModel() {
     private val showFab = MutableLiveData<Boolean>()
     private val result = MutableLiveData<Any>()
 
-    private val storeSelectedId = MutableLiveData<Long>()
+    private val storeSelected = MutableLiveData<Long>()
 
-    private val interactor : EditStoreInteractor
+    private val typeError: MutableLiveData<TypeError> = MutableLiveData()
 
-    init {
-        interactor = EditStoreInteractor()
+    private val interactor : EditStoreInteractor = EditStoreInteractor()
+
+    fun setTypeError(typeError: TypeError){
+        this.typeError.value = typeError
     }
 
-    fun setStoreSelectedId(id: Long){
-        storeSelectedId.value = id
+    fun getTypeError(): MutableLiveData<TypeError> = typeError
+
+    fun setStoreSelected(id: Long){
+        storeSelected.value = id
     }
 
     fun getStoreSelected(): LiveData<StoreEntity>{
-        return interactor.getStoreById(storeSelectedId.value!!)
+        return interactor.getStoreById(storeSelected.value!!)
     }
     fun setShowFab(isVisible: Boolean){
         showFab.value = isVisible
@@ -44,15 +53,22 @@ class EditStoreViewModel: ViewModel() {
     }
 
     fun saveStore(storeEntity: StoreEntity){
-        interactor.saveStore(storeEntity) { newId ->
-            result.value = newId
-        }
+        executeAction(storeEntity) { interactor.saveStore(storeEntity) }
     }
 
     fun updateStore(storeEntity: StoreEntity){
-        viewModelScope.launch {
-            interactor.updateStore(storeEntity)
-        }
+        executeAction(storeEntity) { interactor.updateStore(storeEntity) }
     }
 
+
+    private fun executeAction(storeEntity: StoreEntity, block: suspend () -> Unit): Job {
+        return viewModelScope.launch {
+            try {
+                block()
+                result.value = storeEntity
+            } catch (e: StoresException) {
+                typeError.value = e.typeError
+            }
+        }
+    }
 }

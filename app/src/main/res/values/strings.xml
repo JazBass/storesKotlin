@@ -20,4 +20,9 @@
     <string name="main_error_no_website">This store has not a website</string>
     <string name="main_error_no_resolve">No comp[atible app founded</string>
     <string name="dialog_options_title">Whta would you like to do?</string>
+    <string name="main_error_get">Error al consultar datos</string>
+    <string name="main_error_instert">Error al insertar datos</string>
+    <string name="main_error_update">Error al actualizar datos</string>
+    <string name="main_error_delete">Error al eliminar datos</string>
+    <string name="main_error_unknow">Error desconocido</string>
 </resources>

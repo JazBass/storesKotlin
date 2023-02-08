@@ -13,7 +13,7 @@ interface StoreDao {
     fun getStoreById(id: Long) : LiveData<StoreEntity>
 
     @Insert
-    fun addStore(storeEntity: StoreEntity) : Long
+    suspend fun addStore(storeEntity: StoreEntity) : Long
 
     @Update
     suspend fun updateStore(storeEntity: StoreEntity): Int

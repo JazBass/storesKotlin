@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
@@ -59,11 +58,17 @@ class MainActivity : AppCompatActivity(), OnClickListener {
 
         mMainViewModel.getTypeError().observe(this){typeError ->
             val msgRes = when (typeError){
-                TypeError.GET -> "Error al consultar datos"
-                TypeError.INSERT -> "Error al insertar datos"
-                TypeError.UPDATE -> "Error al actualizar datos"
-                TypeError.DELETE -> "Error al eliminar datos"
-                else -> "Error desconocido"
+
+                TypeError.GET -> R.string.main_error_get
+
+                TypeError.INSERT -> R.string.main_error_instert
+
+                TypeError.UPDATE -> R.string.main_error_update
+
+                TypeError.DELETE -> R.string.main_error_delete
+
+                else -> R.string.main_error_unknow
+
             }
             Snackbar.make(mBinding.root, msgRes, Snackbar.LENGTH_SHORT).show()
         }
@@ -76,7 +81,7 @@ class MainActivity : AppCompatActivity(), OnClickListener {
 
     private fun launchEditFragment(storeEntity: StoreEntity = StoreEntity()) {
         mEditStoreViewModel.setShowFab(false)
-        mEditStoreViewModel.setStoreSelectedId(storeEntity.id)
+        mEditStoreViewModel.setStoreSelected(storeEntity.id)
 
         val fragment = EditStoreFragment()
         val fragmentManager = supportFragmentManager
@@ -101,6 +106,11 @@ class MainActivity : AppCompatActivity(), OnClickListener {
         }
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        mEditStoreViewModel.setShowFab(true)
+    }
+
     /*
     *OnClickListener
     */
@@ -109,7 +119,7 @@ class MainActivity : AppCompatActivity(), OnClickListener {
         launchEditFragment(storeEntity)
     }
 
-    override fun onFavoriteStore(storeEntity: StoreEntity) {
+    override fun    onFavoriteStore(storeEntity: StoreEntity) {
         mMainViewModel.updateStore(storeEntity)
     }
 
