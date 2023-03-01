@@ -1,12 +1,10 @@
 package com.jazbass.stores.editModule.viewModel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jazbass.stores.common.entities.StoreEntity
-import com.jazbass.stores.common.utils.Constants
 import com.jazbass.stores.common.utils.StoresException
 import com.jazbass.stores.common.utils.TypeError
 import com.jazbass.stores.editModule.model.EditStoreInteractor

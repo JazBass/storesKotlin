@@ -6,11 +6,13 @@ import android.text.Editable
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputLayout
 import com.jazbass.stores.R
@@ -140,6 +142,26 @@ class EditStoreFragment : Fragment() {
     }
 
     private fun String.editable(): Editable = Editable.Factory.getInstance().newEditable(this)
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        requireActivity().onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true){
+            override fun handleOnBackPressed() {
+                MaterialAlertDialogBuilder(requireActivity())
+                    .setTitle(R.string.exit_dialog_title)
+                    .setMessage(R.string.exit_dialog_message)
+                    .setPositiveButton(R.string.exit_dialog_ok){_, _->
+                        if (isEnabled){
+                            isEnabled = false
+                            requireActivity().onBackPressedDispatcher.onBackPressed()
+                            mEditStoreViewModel.setShowFab(true)
+                        }
+                    }
+                    .setNegativeButton(R.string.exit_dialog_cancel, null)
+                    .show()
+            }
+        })
+    }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_save, menu)

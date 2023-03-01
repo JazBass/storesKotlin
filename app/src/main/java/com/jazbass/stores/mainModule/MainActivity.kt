@@ -106,11 +106,6 @@ class MainActivity : AppCompatActivity(), OnClickListener {
         }
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        mEditStoreViewModel.setShowFab(true)
-    }
-
     /*
     *OnClickListener
     */
@@ -119,7 +114,7 @@ class MainActivity : AppCompatActivity(), OnClickListener {
         launchEditFragment(storeEntity)
     }
 
-    override fun    onFavoriteStore(storeEntity: StoreEntity) {
+    override fun onFavoriteStore(storeEntity: StoreEntity) {
         mMainViewModel.updateStore(storeEntity)
     }
 

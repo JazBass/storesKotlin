@@ -25,4 +25,8 @@
     <string name="main_error_update">Error al actualizar datos</string>
     <string name="main_error_delete">Error al eliminar datos</string>
     <string name="main_error_unknow">Error desconocido</string>
+    <string name="exit_dialog_title">Do you want to exit?</string>
+    <string name="exit_dialog_message">You will lose your dont saved changes</string>
+    <string name="exit_dialog_ok">Exit</string>
+    <string name="exit_dialog_cancel">Cancel</string>
 </resources>
