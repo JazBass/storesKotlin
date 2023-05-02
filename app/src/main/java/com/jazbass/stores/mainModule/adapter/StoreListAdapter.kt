@@ -1,17 +1,17 @@
 package com.jazbass.stores.mainModule.adapter
 
-import android.content.Context
-import android.view.LayoutInflater
 import android.view.View
+import com.jazbass.stores.R
 import android.view.ViewGroup
+import android.content.Context
+import com.bumptech.glide.Glide
+import android.view.LayoutInflater
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.jazbass.stores.R
 import com.jazbass.stores.common.entities.StoreEntity
 import com.jazbass.stores.databinding.ItemStoreBinding
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 
 class StoreListAdapter (private var listener: OnClickListener):
     ListAdapter<StoreEntity, RecyclerView.ViewHolder>(StoreDiffCallback()) {
